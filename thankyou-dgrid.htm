@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Tutorial: Hello dgrid!</title>
+    <link rel="stylesheet" href="dgrid/css/dgrid.css">
+    <style>
+      .errorMessage {
+        height: 1em;
+        margin: 1em 2em;
+        padding: 1em 2em;
+
+        background-color: #fcc;
+        color: #900;
+      }
+      .hidden {
+        display: none;
+      }
+    </style>
+</head>
+<body class="claro">
+    <div id="message" class="message hidden"></div>
+    <div id="grid"></div>
+    <!-- this configuration assumes that the dgrid package is located
+         in the filesystem as a sibling to the dojo package -->
+    <script src="dojo/dojo.js"
+        data-dojo-config="async: true"></script>
+    <script>
+        require([ 'dgrid/Grid', 'dojo/domReady!' ], function (Grid) {
+            var data = [
+              {Gift: 'Ball', Giver: 'Emily', EmailAddress: 'erother@gmail.com', EmailNote:'Thank you for the ball.'},
+              {Gift: 'Hammock', Giver: 'Grandpa', EmailAddress: 'gramp@att.net', EmailNote: 'Thank you for the hammock.'}
+            ];
+            var grid = new Grid({
+              columns: {
+                Gift: 'Gift',
+                Giver: 'Giver',
+                EmailAddress: 'EmailAddress',
+                EmailNote: 'EmailNote'
+              }
+            }, 'grid');
+            grid.renderArray(data);
+        });
+    </script>
+</body>
+</html>
