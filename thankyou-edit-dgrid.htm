@@ -13,6 +13,14 @@
         background-color: #fcc;
         color: #900;
       }
+      .warningMessage {
+        height: 1em;
+        margin: 1em 2em;
+        padding: 1em 2em;
+
+        background-color: #e1f8cc;
+        color: #007000;
+      }
       .hidden {
         display: none;
       }
@@ -28,32 +36,108 @@
     <script>
         require([
 					'dojo/dom',
-					'dstore/RequestMemory',
-					'dgrid/OnDemandGrid'
-				], function (dom, RequestMemory, OnDemandGrid) {
-            var grid = new OnDemandGrid({
-							collection: new RequestMemory({target: 'http://localhost:3000/sql'}),
-              columns: {
-                Gift: 'Gift',
-                Giver: 'Giver',
-                EmailAddress: 'EmailAddress',
-                EmailNote: 'EmailNote'
-              }
+					'dstore/Rest',
+					'dgrid/OnDemandGrid',
+          'dojo/_base/declare',
+          'dgrid/Keyboard',
+          'dgrid/Selection',
+          'dgrid/Editor',
+          'dojo/on'
+				], function (dom, Rest, OnDemandGrid, declare, Keyboard, Selection, Editor, on) {
+            var store = new Rest({target: 'http://localhost:3000/sql'});
+            store.idProperty = 'ID';
+            var editGrid = new(declare([ OnDemandGrid, Keyboard, Selection, Editor ])) ({
+              collection: store,
+              columns:
+                {
+                  sendEmail: {
+                    editor: 'checkbox',
+                    label: 'Send Email',
+                    autoSave: false,
+                    sortable: false
+                  },
+                  Gift: {
+                    field: 'Gift',
+                    label: 'Gift',
+                    editor: 'text',
+                    editOn: 'click',
+                    autoSave: false,
+                    sortable: false
+                  },
+                  Giver: {
+                    field: 'Giver',
+                    label: 'Giver',
+                    editor: 'text',
+                    editOn: 'click',
+                    autoSave: false,
+                    sortable: false
+                  },
+                  EmailAddress: {
+                    field: 'EmailAddress',
+                    label: 'EmailAddress',
+                    editor: 'text',
+                    editOn: 'click',
+                    autoSave: false,
+                    sortable: false
+                  },
+                  EmailNote: {
+                    field: 'EmailNote',
+                    label: 'EmailNote',
+                    editor: 'text',
+                    editOn: 'click',
+                    autoSave: false,
+                    sortable: false
+                  }
+                }
             }, 'grid');
-						console.log(grid.collection);
+            // var grid = new OnDemandGrid({
+						// 	collection: new RequestMemory({target: 'http://localhost:3000/sql'}),
+            //   columns: {
+            //     Gift: 'Gift',
+            //     Giver: 'Giver',
+            //     EmailAddress: 'EmailAddress',
+            //     EmailNote: 'EmailNote'
+            //   }
+            // }, 'grid');
+						//console.log(editGrid.collection);
+
+
 						var messageNode = dom.byId('message');
-						grid.on('dgrid-error',function(event){
+
+            on(editGrid,'dgrid-datachange',function(event){
+              messageNode.className = 'warningMessage';
+              messageNode.innerHTML = event.value;
+              console.log(Object.keys(event.cell.row.data));
+              // console.log(Object.keys(event.value));
+              console.log(Object.keys(event.cell.column));
+              console.log(Object.keys(event.cell.column.id));
+              console.log(event.cell.row.id);
+              console.log(event.cell.column.id);
+              console.log(event.value);
+              store.put({
+                "ID": event.cell.row.id,
+                "Col": event.cell.column.id,
+                "Val": event.value
+              });
+            });
+
+            // on(editGrid,'click',function(event){
+            //   messageNode.className = 'warningMessage';
+            //   messageNode.innerHTML = event.oldValue;
+            // });
+
+						on(editGrid,'dgrid-error',function(event){
 							messageNode.className = 'errorMessage';
 							messageNode.innerHTML = event.error.message;
 						});
 
-						grid.on('dgrid-refresh-complete', function(event){
+						on(editGrid,'dgrid-refresh-complete', function(event){
 							// hide any previous error message when a refresh completes sucessfully.
 							messageNode.className = 'errorMessage hidden';
-							messagenOde. innerHTML = '';
+							messageNode. innerHTML = '';
 						});
 
-            grid.startup();
+            editGrid.startup();
         });
     </script>
 </body>

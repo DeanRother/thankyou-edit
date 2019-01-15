@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Tutorial: Hello dgrid!</title>
+    <link rel="stylesheet" href="dgrid/css/dgrid.css">
+		<style>
+      .errorMessage {
+        height: 1em;
+        margin: 1em 2em;
+        padding: 1em 2em;
+
+        background-color: #fcc;
+        color: #900;
+      }
+      .hidden {
+        display: none;
+      }
+    </style>
+</head>
+<body class="claro">
+		<h1>Thank You Notes</h1>
+		<div id="message" class="message hidden"></div>
+    <div id="grid"></div>
+    <!-- this configuration assumes that the dgrid package is located
+         in the filesystem as a sibling to the dojo package -->
+    <script src="dojo/dojo.js"></script>
+    <script>
+        require([
+					'dojo/dom',
+					'dstore/RequestMemory',
+					'dgrid/OnDemandGrid'
+				], function (dom, RequestMemory, OnDemandGrid) {
+            var grid = new OnDemandGrid({
+							collection: new RequestMemory({target: 'http://localhost:3000/sql'}),
+              columns: {
+                Gift: 'Gift',
+                Giver: 'Giver',
+                EmailAddress: 'EmailAddress',
+                EmailNote: 'EmailNote'
+              }
+            }, 'grid');
+						console.log(grid.collection);
+						var messageNode = dom.byId('message');
+						grid.on('dgrid-error',function(event){
+							messageNode.className = 'errorMessage';
+							messageNode.innerHTML = event.error.message;
+						});
+
+						grid.on('dgrid-refresh-complete', function(event){
+							// hide any previous error message when a refresh completes sucessfully.
+							messageNode.className = 'errorMessage hidden';
+							messagenOde. innerHTML = '';
+						});
+
+            grid.startup();
+        });
+    </script>
+</body>
+</html>
