@@ -44,7 +44,7 @@
           'dgrid/Editor',
           'dojo/on'
 				], function (dom, Rest, OnDemandGrid, declare, Keyboard, Selection, Editor, on) {
-            var store = new Rest({target: 'http://localhost:3000/sql'});
+            var store = new Rest({target: 'http://localhost:3000/fme'});
             store.idProperty = 'ID';
             var editGrid = new(declare([ OnDemandGrid, Keyboard, Selection, Editor ])) ({
               collection: store,
